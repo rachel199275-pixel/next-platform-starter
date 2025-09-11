@@ -1,7 +1,0 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* 一些全域小調整（可留可刪） */
-html { scroll-behavior: smooth; }
-body { background: #f8fafc; }
