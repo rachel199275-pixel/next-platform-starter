@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useEffect, useState } from 'react';
 import { Instagram, Facebook, Mail, MessageCircle, Sparkles, Check, ChevronRight, Star, ExternalLink, ArrowUp, Compass, FileSignature, Image, Layout, Rocket, TrendingUp, ShieldCheck, Megaphone, BadgeCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -11,7 +12,7 @@ import { motion } from 'framer-motion';
 
 // --------------------------------------------------
 // 開新視窗（行動裝置相容）
-const openInNew = (url: string) => {
+const openInNew = (url) => {
   try {
     const w = window.open(url, '_blank', 'noopener,noreferrer');
     if (!w) window.location.href = url;
@@ -103,7 +104,7 @@ const PLANS = [
 ];
 
 // --------------------------------------------------
-function SectionTitle({ k, t, s }: { k: string; t: string; s?: string }) {
+function SectionTitle({ k, t, s }) {
   return (
     <div className='mb-6'>
       <div className='flex items-center gap-3'>
@@ -118,7 +119,7 @@ function SectionTitle({ k, t, s }: { k: string; t: string; s?: string }) {
 }
 
 // 按鈕系統
-function Btn({ href, children, primary=false }: { href: string; children: any; primary?: boolean }) {
+function Btn({ href, children, primary=false }) {
   return (
     <a href={href} target='_blank' rel='noopener noreferrer'
        className={
@@ -133,7 +134,7 @@ function Btn({ href, children, primary=false }: { href: string; children: any; p
 }
 
 // 數字戰績卡
-function Stat({ n, label }: { n: string; label: string }) {
+function Stat({ n, label }) {
   return (
     <div className='rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm'>
       <div className='text-4xl font-black tracking-tight'>{n}</div>
@@ -143,11 +144,11 @@ function Stat({ n, label }: { n: string; label: string }) {
 }
 
 // 作品卡片
-function WorkCard({ w }: { w: { title: string; tag: string; href: string; imgUrl: string } }) {
+function WorkCard({ w }) {
   return (
     <a href={w.href} target='_blank' rel='external noopener noreferrer' onClick={(e)=>{e.preventDefault(); openInNew(w.href);}} className='group block rounded-2xl border bg-white overflow-hidden border-slate-200 ring-1 ring-slate-100 hover:ring-sky-100 hover:shadow-md transition'>
       <div className='relative aspect-[4/3] bg-slate-100 overflow-hidden'>
-        <img src={w.imgUrl} alt={w.title} width={1600} height={1200} className='w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]' loading='lazy' onError={(e) => { (e.target as HTMLImageElement).style.display='none'; (e.currentTarget as any).parentElement?.classList.add('grid','place-items-center'); }}/>
+        <img src={w.imgUrl} alt={w.title} width={1600} height={1200} className='w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]' loading='lazy' onError={(e) => { const img = e.target; if (img && img.style) img.style.display = 'none'; const parent = e.currentTarget.parentElement; if (parent) parent.classList.add('grid','place-items-center'); }}/>
         <span className='absolute top-3 left-3 bg-white/90 backdrop-blur px-2 py-1 rounded-full text-xs font-bold text-slate-700 border border-slate-200 shadow-sm'>{w.tag}</span>
         <div className='absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-100 md:opacity-0 md:group-hover:opacity-100 transition pointer-events-none' />
         <div className='absolute left-3 bottom-3 md:hidden'><span className='bg-white/90 backdrop-blur px-2 py-1 rounded text-xs font-bold text-slate-900 border border-slate-200'>{w.title}</span></div>
@@ -164,15 +165,15 @@ function WorkCard({ w }: { w: { title: string; tag: string; href: string; imgUrl
 
 // --------------------------------------------------
 export default function App() {
-  const [active, setActive] = useState<string>('');
+  const [active, setActive] = useState('');
   const [progress, setProgress] = useState(0);
 
   // 輕量 SEO：寫入 <head>
   useEffect(() => {
     document.title = SEO.title;
-    const set = (attr: 'name'|'property', key: string, value: string) => {
+    const set = (attr, key, value) => {
       const selector = attr === 'name' ? `meta[name="${key}"]` : `meta[property="${key}"]`;
-      let m = document.querySelector(selector) as HTMLMetaElement | null;
+      let m = document.querySelector(selector);
       if (!m) { m = document.createElement('meta'); m.setAttribute(attr, key); document.head.appendChild(m); }
       m.setAttribute('content', value);
     };
@@ -189,7 +190,7 @@ export default function App() {
 
     // canonical（唯一網址）
     {
-      let canon = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+      let canon = document.querySelector('link[rel="canonical"]');
       if (!canon) { canon = document.createElement('link'); canon.rel = 'canonical'; document.head.appendChild(canon); }
       canon.href = SEO.url;
     }
@@ -203,15 +204,15 @@ export default function App() {
         url: SEO.url,
         logo: SEO.image,
         sameAs: [LINKS.ig, LINKS.fb]
-      } as const;
-      let ld = document.getElementById('ld-org') as HTMLScriptElement | null;
+      } ;
+      let ld = document.getElementById('ld-org');
       if (!ld) { ld = document.createElement('script'); ld.type = 'application/ld+json'; ld.id = 'ld-org'; document.head.appendChild(ld); }
       ld.text = JSON.stringify(data);
     }
 
     // Preload 首屏大圖（提升 LCP）
     {
-      let pre = document.querySelector('link[data-hero-preload]') as HTMLLinkElement | null;
+      let pre = document.querySelector('link[data-hero-preload]');
       if (!pre) { pre = document.createElement('link'); pre.rel = 'preload'; pre.as = 'image'; pre.setAttribute('data-hero-preload',''); document.head.appendChild(pre); }
       pre.href = HERO_IMG;
     }
@@ -220,7 +221,7 @@ export default function App() {
   // Scroll-Spy：觀察各區塊使導覽高亮
   useEffect(() => {
     const ids = ['services','works','why-us','process','plans','contact'];
-    const els = ids.map(id => document.getElementById(id)).filter(Boolean) as Element[];
+    const els = ids.map(id => document.getElementById(id)).filter(Boolean);
     const io = new IntersectionObserver((entries) => {
       const visible = entries.filter(e => e.isIntersecting).sort((a,b)=> (b.intersectionRatio - a.intersectionRatio))[0];
       if (visible?.target?.id) setActive(visible.target.id);
@@ -238,11 +239,11 @@ export default function App() {
       setProgress(p);
     };
     onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true } as any);
+    window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const scrollToId = (id: string) => {
+  const scrollToId = (id) => {
     const el = document.getElementById(id);
     if (!el) return;
     const offset = 64; // sticky nav height
@@ -354,7 +355,7 @@ export default function App() {
 
       <main>
         {/* SERVICES */}
-        <motion.section id='services' className='max-w-6xl mx-auto px-4 py-16 scroll-mt-20 lg:scroll-mt-24 rounded-3xl border border-slate-200 bg-white shadow-sm' initial={{opacity:0, y:24}} whileInView={{opacity:1, y:0}} viewport={{once:true, amount:0.2}} transition={{duration:0.5}}>
+        <motion.section id='services' className='max-w-6xl mx-auto px-4 py-16 scroll-mt-20 lg:scroll-mt-24 rounded-3xl border border-slate-200 bg-white shadow-sm' initial={{opacity:1, y:0}} whileInView={{opacity:1, y:0}} viewport={{once:true, amount:0.2}} transition={{duration:0.5}}>
           <SectionTitle k='SERVICES' t='三大重點' s='快速理解我們在做什麼' />
           
           <div className='grid md:grid-cols-3 gap-4'>
@@ -374,7 +375,7 @@ export default function App() {
         </motion.section>
 
         {/* PROOF */}
-        <motion.section id='proof' className='max-w-6xl mx-auto px-4 py-16 rounded-3xl border border-slate-200 bg-white shadow-sm' initial={{opacity:0, y:24}} whileInView={{opacity:1, y:0}} viewport={{once:true, amount:0.2}} transition={{duration:0.5}}>
+        <motion.section id='proof' className='max-w-6xl mx-auto px-4 py-16 rounded-3xl border border-slate-200 bg-white shadow-sm' initial={{opacity:1, y:0}} whileInView={{opacity:1, y:0}} viewport={{once:true, amount:0.2}} transition={{duration:0.5}}>
           <SectionTitle k='PROOF' t='成效公開可驗證' />
           <div className='grid md:grid-cols-3 gap-4 mb-6'>
             <Stat n='30+ 年' label='在地經驗' />
@@ -402,7 +403,7 @@ export default function App() {
         </motion.section>
 
         {/* WORKS */}
-        <motion.section id='works' className='max-w-6xl mx-auto px-4 py-16 scroll-mt-20 lg:scroll-mt-24 rounded-3xl border border-slate-200 bg-white shadow-sm' initial={{opacity:0, y:24}} whileInView={{opacity:1, y:0}} viewport={{once:true, amount:0.2}} transition={{duration:0.5}}>
+        <motion.section id='works' className='max-w-6xl mx-auto px-4 py-16 scroll-mt-20 lg:scroll-mt-24 rounded-3xl border border-slate-200 bg-white shadow-sm' initial={{opacity:1, y:0}} whileInView={{opacity:1, y:0}} viewport={{once:true, amount:0.2}} transition={{duration:0.5}}>
           <SectionTitle k='WORKS' t='精選作品 / 類型' />
           {Array.isArray(WORKS) && WORKS.length > 0 ? (
             <div className='grid md:grid-cols-3 gap-4'>
@@ -432,7 +433,7 @@ export default function App() {
             <div className='mx-auto h-full max-w-5xl bg-[radial-gradient(ellipse_at_center,rgba(2,132,199,0.10),transparent_60%)] blur-2xl' />
           </div>
         </div>
-        <motion.section id='why-us' className='max-w-6xl mx-auto px-4 py-16 scroll-mt-20 lg:scroll-mt-24 rounded-3xl border border-slate-200 bg-white shadow-sm' initial={{opacity:0, y:24}} whileInView={{opacity:1, y:0}} viewport={{once:true, amount:0.2}} transition={{duration:0.5}}>
+        <motion.section id='why-us' className='max-w-6xl mx-auto px-4 py-16 scroll-mt-20 lg:scroll-mt-24 rounded-3xl border border-slate-200 bg-white shadow-sm' initial={{opacity:1, y:0}} whileInView={{opacity:1, y:0}} viewport={{once:true, amount:0.2}} transition={{duration:0.5}}>
           <SectionTitle k='WHY US' t='我們不一樣' />
           <div className='grid md:grid-cols-2 gap-4'>
             {WHYUS.map((i, idx) => (
@@ -457,7 +458,7 @@ export default function App() {
             <div className='mx-auto h-full max-w-5xl bg-[radial-gradient(ellipse_at_center,rgba(2,132,199,0.10),transparent_60%)] blur-2xl' />
           </div>
         </div>
-        <motion.section id='process' className='max-w-6xl mx-auto px-4 py-16 scroll-mt-20 lg:scroll-mt-24 rounded-3xl border border-slate-200 bg-white shadow-sm' initial={{opacity:0, y:24}} whileInView={{opacity:1, y:0}} viewport={{once:true, amount:0.2}} transition={{duration:0.5}}>
+        <motion.section id='process' className='max-w-6xl mx-auto px-4 py-16 scroll-mt-20 lg:scroll-mt-24 rounded-3xl border border-slate-200 bg-white shadow-sm' initial={{opacity:1, y:0}} whileInView={{opacity:1, y:0}} viewport={{once:true, amount:0.2}} transition={{duration:0.5}}>
           <SectionTitle k='PROCESS' t='合作流程' s='六個步驟，清楚透明' />
           <div className='grid md:grid-cols-3 gap-4'>
             {[
@@ -481,11 +482,11 @@ export default function App() {
         </motion.section>
 
         {/* REVIEWS */}
-        <motion.section id='reviews' className='max-w-6xl mx-auto px-4 py-16 rounded-3xl border border-slate-200 bg-white shadow-sm' initial={{opacity:0, y:24}} whileInView={{opacity:1, y:0}} viewport={{once:true, amount:0.2}} transition={{duration:0.5}}>
+        <motion.section id='reviews' className='max-w-6xl mx-auto px-4 py-16 rounded-3xl border border-slate-200 bg-white shadow-sm' initial={{opacity:1, y:0}} whileInView={{opacity:1, y:0}} viewport={{once:true, amount:0.2}} transition={{duration:0.5}}>
           <SectionTitle k='REVIEWS' t='客戶回饋' />
           <div className='grid md:grid-cols-2 gap-4'>
             {REVIEWS.map((r) => (
-              <div key={(r as any).url || r.author + (r.time || '')} className='relative rounded-2xl border border-slate-200 bg-white p-5 shadow-sm'>
+              <div key={r.url || (r.author + (r.time || ''))} className='relative rounded-2xl border border-slate-200 bg-white p-5 shadow-sm'>
                 <div className='absolute -top-3 left-4 text-4xl text-slate-200 select-none'>“</div>
                 <span className='absolute right-3 top-3 text-[10px] font-bold text-slate-600 bg-slate-100 border border-slate-200 rounded-full px-2 py-0.5'>Google</span>
                 <div className='flex items-center gap-1 text-amber-500 mb-2'>
@@ -495,7 +496,7 @@ export default function App() {
                 </div>
                 <p className='text-sm text-slate-700 leading-relaxed'>{r.text}</p>
                 <div className='mt-3 text-xs text-slate-500 text-right'>
-                  — <a href={(r as any).url} target='_blank' rel='noopener' className='text-slate-600 hover:text-sky-700'>{r.author}</a>{r.time ? `（${r.time}）` : null}
+                  — <a href={r.url} target='_blank' rel='noopener' className='text-slate-600 hover:text-sky-700'>{r.author}</a>{r.time ? `（${r.time}）` : null}
                 </div>
               </div>
             ))}
@@ -505,7 +506,7 @@ export default function App() {
         {/* PLANS */}
         {/* WAVE DIVIDER */}
         <div className='-mt-1 text-sky-50'><svg viewBox='0 0 1200 60' preserveAspectRatio='none' className='w-full h-8'><path d='M0,0 C 300,60 900,0 1200,50 L1200,60 L0,60 Z' className='fill-current'></path></svg></div>
-        <motion.section id='plans' className='max-w-6xl mx-auto px-4 py-16 scroll-mt-20 lg:scroll-mt-24 rounded-3xl border border-slate-200 bg-white shadow-sm' initial={{opacity:0, y:24}} whileInView={{opacity:1, y:0}} viewport={{once:true, amount:0.2}} transition={{duration:0.5}}>
+        <motion.section id='plans' className='max-w-6xl mx-auto px-4 py-16 scroll-mt-20 lg:scroll-mt-24 rounded-3xl border border-slate-200 bg-white shadow-sm' initial={{opacity:1, y:0}} whileInView={{opacity:1, y:0}} viewport={{once:true, amount:0.2}} transition={{duration:0.5}}>
           <SectionTitle k='PLANS' t='合作方案' />
           <div className='grid md:grid-cols-3 gap-4'>
             {PLANS.map((p) => (
@@ -528,7 +529,7 @@ export default function App() {
         </motion.section>
 
         {/* FAQ */}
-        <motion.section className='max-w-6xl mx-auto px-4 py-16 rounded-3xl border border-slate-200 bg-white shadow-sm' initial={{opacity:0, y:24}} whileInView={{opacity:1, y:0}} viewport={{once:true, amount:0.2}} transition={{duration:0.5}}>
+        <motion.section className='max-w-6xl mx-auto px-4 py-16 rounded-3xl border border-slate-200 bg-white shadow-sm' initial={{opacity:1, y:0}} whileInView={{opacity:1, y:0}} viewport={{once:true, amount:0.2}} transition={{duration:0.5}}>
           <SectionTitle k='FAQ' t='常見問答' />
           <div className='space-y-3'>
             {FAQS.map((f) => (
@@ -544,7 +545,7 @@ export default function App() {
         </motion.section>
 
         {/* CONTACT */}
-        <motion.section id='contact' className='max-w-6xl mx-auto px-4 py-16 scroll-mt-20 lg:scroll-mt-24 rounded-3xl border border-slate-200 bg-white shadow-sm' initial={{opacity:0, y:24}} whileInView={{opacity:1, y:0}} viewport={{once:true, amount:0.2}} transition={{duration:0.5}}>
+        <motion.section id='contact' className='max-w-6xl mx-auto px-4 py-16 scroll-mt-20 lg:scroll-mt-24 rounded-3xl border border-slate-200 bg-white shadow-sm' initial={{opacity:1, y:0}} whileInView={{opacity:1, y:0}} viewport={{once:true, amount:0.2}} transition={{duration:0.5}}>
           <SectionTitle k='CONTACT' t='聯絡我' />
           <div className='grid md:grid-cols-2 gap-4'>
             <div className='rounded-2xl border border-slate-200 p-5 bg-white shadow-sm'>
@@ -591,7 +592,7 @@ export default function App() {
           </div>
           <div className='mt-6 flex flex-wrap gap-3'>
             {['services','works','why-us','process','plans','contact'].map(id => (
-              <a key={id} href={`#${id}`} onClick={(e)=>{e.preventDefault();scrollToId(id);}} className='text-slate-600 hover:text-sky-700'>{({services:'服務',works:'作品','why-us':'我們不一樣',process:'流程',plans:'方案',contact:'聯絡'} as any)[id]}</a>
+              <a key={id} href={`#${id}`} onClick={(e)=>{e.preventDefault();scrollToId(id);}} className='text-slate-600 hover:text-sky-700'>{({services:'服務',works:'作品','why-us':'我們不一樣',process:'流程',plans:'方案',contact:'聯絡'})[id]}</a>
             ))}
           </div>
         </div>
