@@ -1,3 +1,8 @@
 /* app/globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 可留白，但你也可以加一些全域小設定 */
 html { scroll-behavior: smooth; }
 body { background: #ffffff; color: #0f172a; }
