@@ -3,6 +3,17 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 可留白，但你也可以加一些全域小設定 */
-html { scroll-behavior: smooth; }
-body { background: #ffffff; color: #0f172a; }
+/* 預設主題 */
+html, body, #__next {
+  @apply bg-slate-50 text-slate-900 antialiased;
+  min-height: 100%;
+}
+
+/* 把模板外層導覽/頁框隱藏（若有） */
+header.site-header,
+.navbar, .platform-nav, .netlify-navbar,
+.site-footer, footer.site-footer {
+  display: none !important;
+}
+
+main { padding: 0 !important; }
