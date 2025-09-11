@@ -1,0 +1,3 @@
+/* app/globals.css — 先放最小設定，之後要再加都可以 */
+html { scroll-behavior: smooth; }
+body { background: #ffffff; color: #0f172a; }
