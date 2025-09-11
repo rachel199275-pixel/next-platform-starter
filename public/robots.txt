@@ -1,0 +1,3 @@
+User-agent: *
+Disallow:
+Sitemap: https://rachelweb.netlify.app/sitemap.xml
