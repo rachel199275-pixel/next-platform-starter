@@ -1,5 +1,7 @@
 // app/layout.tsx
 import './globals.css';
+import 'aos/dist/aos.css'
+import AOSInit from '../components/AOSInit'
 
 export const metadata = {
   title: 'Rachel 蓓霖',
@@ -9,9 +11,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="zh-Hant">
-      <body className="bg-white text-slate-900">
+       <body className="bg-white text-slate-900">
+        <AOSInit />                 {/* ← 新增：初始化 AOS */}
         {children}
       </body>
     </html>
-  );
+  )
 }
