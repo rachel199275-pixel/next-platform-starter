@@ -4,7 +4,7 @@ import 'aos/dist/aos.css'
 import AOSInit from '../components/AOSInit'
 
 export const metadata = {
-  title: 'Rachel 蓓霖',
+  title: '網站架設一條龍，專業服務團隊｜Rachel蓓霖',
   description: '官網設計・SEO關鍵字・網站代管',
 };
 
